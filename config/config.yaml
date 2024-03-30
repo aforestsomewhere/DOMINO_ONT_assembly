@@ -1,0 +1,7 @@
+fastq_sample_names: [barcode12, barcode19b]
+sequencing_summary: /data/Food/analysis/R6564_NGS/Katie_F/DOMINO_WP4/test_ONT/sequencing_summary_FAX56464_098b8cda_ed5ac3ec.txt
+nanoplot_path: /data/Food/analysis/R6564_NGS/Katie_F/DOMINO_WP4/test_ONT/1_run_nanoplot
+nanoplot_threads: 8
+nanocomp_path: /data/Food/analysis/R6564_NGS/Katie_F/DOMINO_WP4/test_ONT/2_run_nanocomp
+nanocomp_threads: 2
+log: /data/Food/analysis/R6564_NGS/Katie_F/DOMINO_WP4/test_ONT/LOGS
