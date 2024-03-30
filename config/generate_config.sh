@@ -38,6 +38,11 @@ echo "nanoplot_threads: 8" >> config.yaml
 #2. NanoComp path
 echo "nanocomp_path: ${PWD}/2_run_nanocomp" >> config.yaml
 echo "nanocomp_threads: 2" >> config.yaml
+
+#3. Porechop_abi
+echo "porechop_path: ${PWD}/3_porechop_abi" >> config.yaml
+echo "porechop_threads: 32" >> config.yaml
+
 #3. mash_path: 
 #echo "mash_path: ${PWD}/3_run_mash" >> config.yaml
 
