@@ -16,7 +16,8 @@ fastq_path = "/data/Food/analysis/R6564_NGS/Katie_F/DOMINO_WP4/test_ONT/fastq"
 rule all:
     input:
         expand(os.path.join(config['nanoplot_path'],"{sample}", "NanoStats.txt"),sample=config['fastq_sample_names']),
-        os.path.join(config['nanocomp_path'], "NanoStats.txt")
+        os.path.join(config['nanocomp_path'], "NanoStats.txt"),
+        expand(os.path.join(config['porechop_path'], "{sample}_chop.fastq.gz"),sample=config['fastq_sample_names'])
 
 # Rule for running NanoPlot on each fastq.gz file
 #note - pandas warning: https://github.com/ranaroussi/yfinance/issues/1837
@@ -56,3 +57,16 @@ rule nanocomp:
     shell:
         "conda activate nanocomp_env && NanoComp --threads {threads} --tsv_stats --outdir {params.outdir} --barcoded --summary {input} && conda deactivate"
 
+# Rule for running Porechop_ABI on raw fastq files
+rule porechop:
+   input:
+       fastq_path + "/" + "{sample}.fastq.gz"
+   output:
+       os.path.join(config['porechop_path'], "{sample}_chop.fastq.gz")
+   threads:
+       config['porechop_threads']
+   params:
+       log = config['log'],
+       queue = "Priority"
+   shell:
+       "conda activate porechop_abi_env && porechop_abi --ab_initio -i {input} -o {output} --threads {threads} && conda deactivate"
