@@ -10,7 +10,7 @@ import glob
 import warnings
 import gzip
 
-fastq_path = "/data/Food/analysis/R6564_NGS/Katie_F/DOMINO_WP4/test_ONT/fastq"
+fastq_path = "/data/Food/analysis/R6564_NGS/Katie_F/hafniaceae/ONT_sequencing/DOMINO_ONT_pipeline_sep_2023/fastq"
 
 ###HELPER FUNCTIONS #####
 
@@ -64,7 +64,8 @@ rule all:
         expand(os.path.join(config['assemblies_work_path'], "{sample}", "flyefull","assembly.fasta"),sample=config['fastq_sample_names']),
         expand(os.path.join(config['assemblies_work_path'], "{sample}", "ravenfull","assembly.fasta"),sample=config['fastq_sample_names']),
         expand(os.path.join(config['assemblies_work_path'], "{sample}", "unicyclerfull","assembly.fasta"),sample=config['fastq_sample_names']),
-        expand(os.path.join(config['assemblies_path'],"{sample}"),sample=config['fastq_sample_names']),
+        
+        #expand(os.path.join(config['assemblies_path'],"{sample}"),sample=config['fastq_sample_names']),
         expand(os.path.join(config['assemblies_path'],"{sample}","{sample}_{assembler}.fasta"), sample=config['fastq_sample_names'],assembler=config['assemblers']),
         expand(os.path.join(config['trycycler_cluster_path'], "{sample}","clustering_full_ok.txt"), sample=config['fastq_sample_names'])
 
@@ -344,23 +345,30 @@ rule unicycler_full:
             touch {output}
         fi
         """
+#rule create_assembly_directory:
+#    output:
+ #       touch(os.path.join(config['assemblies_path'], "{sample}"))
+  #  shell:
+   #     "mkdir -p {output[0]:d}"
+
 rule tidy_assemblies:
     input:
-        assembly = os.path.join(config['assemblies_work_path'], "{sample}", "{assembler}", "assembly.fasta")
+        assembly=os.path.join(config['assemblies_work_path'], "{sample}", "{assembler}", "assembly.fasta")
     output:
-        assembly = os.path.join(config['assemblies_path'], "{sample}", "{sample}_{assembler}.fasta")
+        assembly=os.path.join(config['assemblies_path'], "{sample}", "{sample}_{assembler}.fasta")
     params:
         queue = "Priority",
         outdir = os.path.join(config['assemblies_path'], "{sample}")
     shell:
         """
-        mkdir -p {params.outdir} && cp {input.assembly} {output.assembly}
+        cp {input.assembly} {output.assembly}
         exit 0
         """
+
 # Rule for Trycycler clustering
 rule clustering_full:
     input:
-        assembly=os.path.join(config['assemblies_path'], "{sample}"),
+        assembly=os.path.join(config['assemblies_path'], "{sample}","/"),
         fastq=os.path.join(config['filtlong_path'], "{sample}_filt.fastq.gz"),
         depth=os.path.join(config['depth_path'], "{sample}.txt")
     output:
@@ -373,12 +381,12 @@ rule clustering_full:
     shell:
         """
         ARG=$(cat {input.depth})
-        if (( $(echo "$ARG > 20" | bc -l) )); then
+        if (( $(echo "$ARG > 30" | bc -l) )); then
             rm -rf {params.cluster_dir}
             conda activate trycycler_env
             trycycler cluster --assemblies {input.assembly}/*.fasta --threads {params.threads} --reads {input.fastq} --out_dir {params.cluster_dir}
             conda deactivate
+        else
+            exit 0
         fi
         """
-
-
