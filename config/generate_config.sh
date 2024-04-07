@@ -4,6 +4,12 @@
 
 rm config.yaml
 touch config.yaml
+mkdir -p LOGS
+
+#shell config
+echo "shell_executable: /bin/bash" >> config.yaml
+echo "shell_prefix: source /install/software/anaconda3.6.b/bin/activate;" >> config.yaml
+echo "raw_fastq_path: ${PWD}/fastq" >> config.yaml
 
 #1.fastq_sample_names:
 cd fastq
@@ -50,35 +56,11 @@ echo "porechop_threads: 32" >> config.yaml
 echo "filtlong_path: ${PWD}/4_filtlong" >> config.yaml
 echo "filtlong_threads: 2" >> config.yaml
 
-#5. Trycycler subsample
-#issues with conda - installed with pip3 install git+https://github.com/rrwick/Trycycler.git
-#follow with mamba install of dependencies (minimap2, miniasm)
-echo "depth_path: ${PWD}/5_depth" >> config.yaml
-echo "trycycler_subsample_path: ${PWD}/6_trycycler_subsample" >> config.yaml
-echo "trycycler_subsample_threads: 12" >> config.yaml
+#5. mash_path: 
+echo "mash_path: ${PWD}/5_run_mash" >> config.yaml
 
-#6. Assemblies
-#Issues with flye install: mamba install -c bioconda -c conda-forge flye=2.9 python=3.9
-echo "assemblies_work_path: ${PWD}/7_assemblies_work" >> config.yaml
-echo "flye_threads: 12" >> config.yaml
-echo "raven_threads: 8" >> config.yaml
-echo "unicycler_threads: 32" >> config.yaml
-
-#7. Clean Assemblies
-echo "assemblies_path: ${PWD}/8_assemblies" >> config.yaml
-echo "assemblers: [flye01, flye02, flye03, flyefull, raven01, raven02, raven03, ravenfull,unicycler01, unicycler02, unicycler03, unicyclerfull]" >> config.yaml
-
-#8. Trcycler Clustering
-echo "trycycler_cluster_path: ${PWD}/9_trycycler_cluster" >> config.yaml
-
-#3. mash_path: 
-#echo "mash_path: ${PWD}/3_run_mash" >> config.yaml
-
-#5. mash_db
-#echo "mash_db: /data/Food/analysis/R6564_NGS/Katie_F/databases/mash/refseq.genomes.k21s1000.msh" >> config.yaml
-
-#6. spades_path
-#echo "spades_path: ${PWD}/4_run_spades"  >> config.yaml
+#5a. mash_db
+echo "mash_db: /data/Food/analysis/R6564_NGS/Katie_F/databases/mash/refseq.genomes.k21s1000.msh" >> config.yaml
 
 #7. logs
 echo "log: ${PWD}/LOGS" >> config.yaml
