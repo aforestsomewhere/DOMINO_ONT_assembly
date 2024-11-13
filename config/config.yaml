@@ -1,7 +1,42 @@
-fastq_sample_names: [barcode12, barcode19b]
-sequencing_summary: /data/Food/analysis/R6564_NGS/Katie_F/DOMINO_WP4/test_ONT/sequencing_summary_FAX56464_098b8cda_ed5ac3ec.txt
-nanoplot_path: /data/Food/analysis/R6564_NGS/Katie_F/DOMINO_WP4/test_ONT/1_run_nanoplot
+shell_executable: /bin/bash
+shell_prefix: source /install/software/2024/minpy3/python3.10/bin/activate
+ont_fastq_path: /data/Food/analysis/R1838_DOMINO/katie/kefir_genomes_clinical_trial/DOMINO_ONT_assembly/ont_fastq
+genome_sizes : {
+  "barcode16":"12.3m",
+  "barcode17":"13.5m",
+  "barcode18":"10.8m",
+  "barcode19":"12.1m",
+  "barcode20":"2.8m",
+  "barcode21":"2.6m",
+  "barcode22":"2.1m",
+  "barcode23":"1.9m",
+  "barcode24":"2.4m",
+}
+raw_fastq_sample_names: []
+ont_fastq_sample_names: [barcode16, barcode17, barcode18, barcode19, barcode20, barcode21, barcode22, barcode23, barcode24]
+fastqc_path: /data/Food/analysis/R1838_DOMINO/katie/kefir_genomes_clinical_trial/DOMINO_ONT_assembly/1_run_fastqc
+multiqc_path: /data/Food/analysis/R1838_DOMINO/katie/kefir_genomes_clinical_trial/DOMINO_ONT_assembly/2_run_multiqc
+mash_path: /data/Food/analysis/R1838_DOMINO/katie/kefir_genomes_clinical_trial/DOMINO_ONT_assembly/3_run_mash
+mash_db: /data/Food/analysis/R6564_NGS/Katie_F/databases/mash/refseq.genomes.k21s1000.msh
+jellyfish_path: /data/Food/analysis/R1838_DOMINO/katie/kefir_genomes_clinical_trial/DOMINO_ONT_assembly/4_run_jellyfish
+genomescope2_path: /data/Food/analysis/R1838_DOMINO/katie/kefir_genomes_clinical_trial/DOMINO_ONT_assembly/5_run_genomescope
+spades_path: /data/Food/analysis/R1838_DOMINO/katie/kefir_genomes_clinical_trial/DOMINO_ONT_assembly/6_run_spades
+bandage_path: /data/Food/analysis/R1838_DOMINO/katie/kefir_genomes_clinical_trial/DOMINO_ONT_assembly/7_run bandage
+bandage_binary: /data/Food/analysis/R6564_NGS/Katie_F/Bandage
+faa_path: /data/Food/analysis/R1838_DOMINO/katie/kefir_genomes_clinical_trial/DOMINO_ONT_assembly/8_run_prodigal
+porechop_abi_path: /data/Food/analysis/R1838_DOMINO/katie/kefir_genomes_clinical_trial/DOMINO_ONT_assembly/9_run_porechop_abi
+porechop_threads: 12
+filtlong_path: /data/Food/analysis/R1838_DOMINO/katie/kefir_genomes_clinical_trial/DOMINO_ONT_assembly/10_run_filtlong
+filtlong_threads: 2
+nanoplot_path: /data/Food/analysis/R1838_DOMINO/katie/kefir_genomes_clinical_trial/DOMINO_ONT_assembly/11_nanoplot
 nanoplot_threads: 8
-nanocomp_path: /data/Food/analysis/R6564_NGS/Katie_F/DOMINO_WP4/test_ONT/2_run_nanocomp
+nanocomp_path: /data/Food/analysis/R1838_DOMINO/katie/kefir_genomes_clinical_trial/DOMINO_ONT_assembly/12_nanocomp
 nanocomp_threads: 2
-log: /data/Food/analysis/R6564_NGS/Katie_F/DOMINO_WP4/test_ONT/LOGS
+flye_rough_path: /data/Food/analysis/R1838_DOMINO/katie/kefir_genomes_clinical_trial/DOMINO_ONT_assembly/13_flyerough
+flye_rough_threads: 12
+subsamples_path: /data/Food/analysis/R1838_DOMINO/katie/kefir_genomes_clinical_trial/DOMINO_ONT_assembly/12_subsamples
+assemblies_work_path: /data/Food/analysis/R1838_DOMINO/katie/kefir_genomes_clinical_trial/DOMINO_ONT_assembly/13_assemblies
+assemblies_work_path_shallow: /data/Food/analysis/R1838_DOMINO/katie/kefir_genomes_clinical_trial/DOMINO_ONT_assembly/13a_assemblies
+trycycler_path: /data/Food/analysis/R1838_DOMINO/katie/kefir_genomes_clinical_trial/DOMINO_ONT_assembly/14_trycycler
+assemblers: [flye01, flye02, flye03, raven01, raven02, raven03, unicycler01, unicycler02, unicycler03]
+log: /data/Food/analysis/R1838_DOMINO/katie/kefir_genomes_clinical_trial/DOMINO_ONT_assembly/LOGS
