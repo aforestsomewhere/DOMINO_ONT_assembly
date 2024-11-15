@@ -26,11 +26,72 @@ def generate_colours(n):
 # Define the workflow
 rule all:
     input:
+        expand(os.path.join(config['mash_path'], "{sample}.tab"), sample=config['ont_fastq_sample_names']),
+        expand(os.path.join(config['mash_path'], "{sample}.png"), sample=config['ont_fastq_sample_names']),
         expand(os.path.join(config['porechop_abi_path'], "{sample}_chop.fastq.gz"), sample=config['ont_fastq_sample_names']),
         expand(os.path.join(config['filtlong_path'], "{sample}_filt.fastq.gz"), sample=config['ont_fastq_sample_names']),
         expand(os.path.join(config['nanoplot_path'], "{sample}", "NanoStats.txt"), sample=config['ont_fastq_sample_names']),
         os.path.join(config['nanocomp_path'], "NanoComp-report.html"),
         expand(os.path.join(config['flye_rough_path'], "{sample}", "flye01","assembly.fasta"),sample=config['ont_fastq_sample_names'])
+
+# Rule for profiling readsets against Mash DB to detect potential contamination/leakage
+rule mash:
+    input:
+        os.path.join(config['ont_fastq_path'], "{sample}.fastq.gz")
+    output:
+        os.path.join(config['mash_path'], "{sample}.tab")
+    log:
+        out =os.path.join(config['log'],"{sample}_mash_bac.out") ,
+        err = os.path.join(config['log'],"{sample}_mash_bac.err")
+    params:
+        mash_db = config['mash_db'],
+        log=config['log'],
+        queue = "Priority"
+    shell:
+        "activate mash_test && mash screen -w -p 12 {params.mash_db} {input} 1> {log.out} 2> {log.err} > {output} && conda deactivate"
+
+rule mash_plots:
+    input:
+        os.path.join(config['mash_path'], "{sample}.tab")
+    output:
+        os.path.join(config['mash_path'], "{sample}.png")
+    params:
+        width=80,  # Specify wrap width to allow for long taxa names
+        colors=[
+            "#432a74", "#8c61fc", "#00babe", "#ff8c00", "#c7c4fa", "#bcebeb", "#ffe6cc", "#ff7f00", "#984ea3", "#ffff33"
+        ]  # DOMINO color palette
+    run:
+        import pandas as pd
+        import matplotlib.pyplot as plt
+
+        # Define a function to wrap taxa names
+        def wrap_text(text, width):
+            return '\n'.join([text[i:i+width] for i in range(0, len(text), width)])
+
+        df = pd.read_csv(input[0], sep='\t', header=None)
+        df.columns = ["identity", "shared-hashes", "median-multiplicity", "p-value", "query-ID", "query-description"]
+
+        # Extract match counts and infer top 10 matches
+        df['match_count'] = df['shared-hashes'].str.split('/').str[0].astype(int)
+        top_df = df.sort_values(by="match_count", ascending=False).head(10)
+
+        # Apply wrapping for y-axis labels
+        top_df['wrapped_query-description'] = top_df['query-description'].apply(lambda x: wrap_text(x, width=params.width))
+
+        # Plot a horizontal bar chart
+        plt.figure(figsize=(14, 8))
+        plt.barh(top_df['wrapped_query-description'], top_df['match_count'], color=params.colors)
+        plt.xlabel('Shared K-mer Matches')
+        plt.ylabel('Genomic Reference')
+        plt.title('Top MASH Screen Shared K-mer Matches')
+
+        # Adjust layout to make room for y-axis labels
+        plt.subplots_adjust(left=0.6)
+        plt.gca().invert_yaxis()
+
+        # Save the plot to the output path
+        plt.savefig(output[0], format='png', dpi=300)
+        plt.close()
 
 # Rule for running Porechop_ABI on raw fastq files
 rule porechop:
@@ -105,7 +166,8 @@ rule flye_rough:
     input:
         fastq=os.path.join(config['filtlong_path'],"{sample}_filt.fastq.gz")
     output:
-        fasta=os.path.join(config['flye_rough_path'], "{sample}","flye01", "assembly.fasta")
+        fasta=os.path.join(config['flye_rough_path'], "{sample}","flye01", "assembly.fasta"),
+        logfile=os.path.join(config['flye_rough_path'], "{sample}", "flye01", "flye.log")
     params:
         genome_size = lambda wildcards: genome_sizes[wildcards.sample],
         queue = "Priority",
