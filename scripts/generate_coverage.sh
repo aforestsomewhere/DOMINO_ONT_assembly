@@ -25,8 +25,8 @@ for sample_dir in "${PWD}/13_flyerough"/*; do
         coverage=$(cat "$depthcheck_file")
         echo "  \"$sample\": \"$coverage\"," >> "$COVERAGE_YAML"
 
-        # Check if coverage is less than 30 and add to shallow_samples if true
-        if (( coverage < 30 )); then
+        # Check if coverage is less than 70 and add to shallow_samples if true
+        if (( coverage < 70 )); then
             shallow_samples+=("$sample")
         else
             deep_samples+=("$sample")
