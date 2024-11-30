@@ -56,29 +56,34 @@ rule mash_plots:
     output:
         os.path.join(config['mash_path'], "{sample}.png")
     params:
-        width=80,  # Specify wrap width to allow for long taxa names
+        width=80,  # Specify wrap width as a parameter for flexibility
         colors=[
             "#432a74", "#8c61fc", "#00babe", "#ff8c00", "#c7c4fa", "#bcebeb", "#ffe6cc", "#ff7f00", "#984ea3", "#ffff33"
-        ]  # DOMINO color palette
+        ]  # Custom colors
     run:
         import pandas as pd
         import matplotlib.pyplot as plt
 
-        # Define a function to wrap taxa names
+        # Define a function to wrap text by inserting newline characters
         def wrap_text(text, width):
             return '\n'.join([text[i:i+width] for i in range(0, len(text), width)])
 
+        # Load data
         df = pd.read_csv(input[0], sep='\t', header=None)
+
+        # Rename columns
         df.columns = ["identity", "shared-hashes", "median-multiplicity", "p-value", "query-ID", "query-description"]
 
-        # Extract match counts and infer top 10 matches
+        # Extract match counts
         df['match_count'] = df['shared-hashes'].str.split('/').str[0].astype(int)
+
+        # Get top entries based on match count
         top_df = df.sort_values(by="match_count", ascending=False).head(10)
 
-        # Apply wrapping for y-axis labels
+        # Apply wrapping to the 'query-description' column for y-axis labels
         top_df['wrapped_query-description'] = top_df['query-description'].apply(lambda x: wrap_text(x, width=params.width))
 
-        # Plot a horizontal bar chart
+        # Plot the horizontal bar chart
         plt.figure(figsize=(14, 8))
         plt.barh(top_df['wrapped_query-description'], top_df['match_count'], color=params.colors)
         plt.xlabel('Shared K-mer Matches')
