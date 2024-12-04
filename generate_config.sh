@@ -67,7 +67,7 @@ echo "config_file: ${PWD}/config/config.yaml" >> config/config.yaml
 # illumina_fastq_sample_names:
 if $illumina_flag; then
     echo "Setting up Illumina data..."
-    echo "raw_fastq_path: ${PWD}/illumina_fastq" >> config/config.yaml
+    echo "illumina_fastq_path: ${PWD}/illumina_fastq" >> config/config.yaml
     cd illumina_fastq
     ls *_R1.fastq.gz | sed 's/^//; s/\_R1.fastq.gz$//' > samplenames.txt
     cp samplenames.txt ..
@@ -109,7 +109,7 @@ if $ont_flag; then
 fi
 
 # Write list of samplenames
-echo "raw_fastq_sample_names: [${joined_samples}]" >> config/config.yaml
+echo "illumina_fastq_sample_names: [${joined_samples}]" >> config/config.yaml
 echo "ont_fastq_sample_names: [${joined_ont_samples}]" >> config/config.yaml
 
 #2. fastqc-path
@@ -137,7 +137,7 @@ echo "genomescope2_path: ${PWD}/5_run_genomescope" >> config/config.yaml
 
 #6. spades_path
 echo "spades_path: ${PWD}/6_run_spades"  >> config/config.yaml
-
+echo "spades_assemblies_path: ${PWD}/5_spades_assemblies" >> config/config.yaml
 #7. bandage
 echo "bandage_path: ${PWD}/7_run bandage" >> config/config.yaml
 echo "bandage_binary: /data/Food/analysis/R6564_NGS/Katie_F/Bandage" >> config/config.yaml
@@ -180,9 +180,6 @@ echo "assemblers: [flye01, flye02, flye03, raven01, raven02, raven03, unicycler0
 
 #8. Trcycler Clustering
 echo "trycycler_cluster_path: ${PWD}/15_trycycler_cluster" >> config/config.yaml
-
-#7. spades_assemblies_path
-echo "spades_assemblies_path: ${PWD}/5_spades_assemblies" >> config/config.yaml
 
 #18 Polishing
 echo "polished_assemblies: ${PWD}/18_polishing" >> config/config.yaml
