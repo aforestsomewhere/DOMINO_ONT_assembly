@@ -112,6 +112,8 @@ fi
 echo "illumina_fastq_sample_names: [${joined_samples}]" >> config/config.yaml
 echo "ont_fastq_sample_names: [${joined_ont_samples}]" >> config/config.yaml
 
+#fastp
+echo "fastp_path: ${PWD}/1_fastp" >> config/config.yaml
 #2. fastqc-path
 echo "fastqc_path: ${PWD}/1_run_fastqc" >> config/config.yaml
 
