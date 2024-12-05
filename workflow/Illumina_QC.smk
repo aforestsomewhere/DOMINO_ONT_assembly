@@ -89,12 +89,12 @@ rule spades:
         r1 = os.path.join(config['fastp_path'],"{sample}_R1.fastq.gz"),
         r2 = os.path.join(config['fastp_path'],"{sample}_R2.fastq.gz")    
     output:
-        assembly = os.path.join(config['spades_path'], "{sample}_spades", "contigs.fasta"),
-        outdir = os.path.join(config['spades_path'], "{sample}_spades")
+        assembly = os.path.join(config['spades_path'], "{sample}_spades", "contigs.fasta")
     params:
-        queue = "Priority"
+        queue = "Priority",
+        outdir = os.path.join(config['spades_path'], "{sample}_spades")
     shell:
-        "activate SPAdes && spades.py -o {output.outdir} -1 {input.r1} -2 {input.r2} --only-assembler --isolate 2>&1 | tee -a {log} && conda deactivate"
+        "activate SPAdes && spades.py -o {params.outdir} -1 {input.r1} -2 {input.r2} --only-assembler --isolate 2>&1 | tee -a {log} && conda deactivate"
 
 #Rule to cleanup intermediate files
 rule spades_cleanup:
