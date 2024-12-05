@@ -74,7 +74,7 @@ rule kaiju_table:
     input:
         kaiju_out=expand(os.path.join(config['kaiju_path'], "{sample}.out"), sample=config['ont_fastq_sample_names'])
     output:
-        kaiju_table=os.path.join(config['kaiju_path'], "merge_kaiju_species.tsv"), sample=config['ont_fastq_sample_names']
+        kaiju_table=os.path.join(config['kaiju_path'], "merge_kaiju_species.tsv")
     params:
         kaiju_db_nodes=config['kaiju_db_nodes'],
         kaiju_db_names=config['kaiju_db_names']
