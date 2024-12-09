@@ -17,11 +17,12 @@ rule all:
         expand(os.path.join(config['kaiju_path'], "{sample}.png"),sample=config['ont_fastq_sample_names']),
         expand(os.path.join(config['kaiju_path'], "{sample}_taxids.tsv"),sample=config['ont_fastq_sample_names']),
         expand(os.path.join(config['kaiju_path'], "{sample}_taxonkit.tsv"),sample=config['ont_fastq_sample_names']),
-	      os.path.join(config['kaiju_path'], "merge_kaiju_species.tsv"),
+	os.path.join(config['kaiju_path'], "merge_kaiju_species.tsv"),
         expand(os.path.join(config['gtdb_path'],"in","{sample}.fasta"),sample=config['ont_fastq_sample_names']),
         os.path.join(config['gtdb_path'], "out","classify","gtdbtk.bac120.summary.tsv"),
-	      os.path.join(config['quast_path'], "report.txt")
-
+	os.path.join(config['quast_path'], "report.txt"),
+	expand(os.path.join(config['flye_rough_path'], "{sample}","flye01", "depthcheckflag.txt"),sample=config['ont_fastq_sample_names']),
+        os.path.join(config['flye_rough_path'], "updateconfigflag.txt")
 
 #Rule to assign taxonomy to contigs using Kaiju
 rule run_kaiju:
@@ -131,4 +132,35 @@ rule run_quast:
             mkdir -p {params.outdir}
             quast -o {params.outdir} -L -t 8 {input.assemblies}
             conda deactivate
+        """
+
+rule depth:
+    input:
+        logfile=os.path.join(config['flye_rough_path'], "{sample}", "flye01", "flye.log"),
+        fasta=os.path.join(config['flye_rough_path'], "{sample}","flye01", "assembly.fasta")
+    output:
+        os.path.join(config['flye_rough_path'], "{sample}", "flye01", "depthcheckflag.txt")
+    params:
+        queue="Priority",
+        log=config['log'],
+        config=config['config_file']
+    shell:
+        """
+        # Extract the "Estimated coverage" from the rough Flye assembly
+        coverage=$(grep -oP "Estimated coverage: \K\d+" {input.logfile})
+
+        # Check if coverage was found
+        if [ -z "$coverage" ]; then
+            echo "Error: Coverage not found in log file: {input.logfile}"
+            exit 1
+        else
+            echo "$coverage" > {output}
+        fi
+        """
+rule update_config:
+    output:
+        flag_file=os.path.join(config['flye_rough_path'], "updateconfigflag.txt")
+    shell:
+        """
+            ./scripts/update_config.sh
         """
