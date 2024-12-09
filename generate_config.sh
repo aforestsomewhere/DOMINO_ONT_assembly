@@ -186,7 +186,7 @@ echo "trycycler_cluster_path: ${PWD}/15_trycycler_cluster" >> config/config.yaml
 #18 Polishing
 echo "polished_assemblies: ${PWD}/18_polishing" >> config/config.yaml
 echo "pypolca_threads: 12" >> config/config.yaml
-if [[! -f scripts/polypolish ]]; then
+if [[ ! -f scripts/polypolish ]]; then
     #download latest binary release of polypolish and decompress
     curl -s https://api.github.com/repos/rrwick/Polypolish/releases/latest | grep "browser_download_url.*linux" | cut -d : -f 2,3 | tr -d \" | wget -qi -
     gunzip *polypolish-linux* && mv *polypolish-linux* scripts/
