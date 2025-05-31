@@ -18,3 +18,5 @@ A Snakemake workflow for the assembly of bacterial genomes sequenced on ONT plat
 
 # TODO
 1. Upgrade snakemake to version that supports directory() and checkpoints
+
+31/05/2025 This is a line from RStudio
